@@ -21,4 +21,28 @@
     box-shadow: var(--shadow-01);
     border-radius: 4px;
   }
+  .modal_wrap {
+    .recruit_container {
+      padding-bottom: 32px;
+      .recruit_company_name {
+        color: var(--grey-80);
+        font-weight: 600;
+        padding-bottom: 16px;
+      }
+      .recruit_title {
+        font-size: 24px;
+        font-weight: bold;
+        padding-bottom: 2px;
+      }
+      .recruit_term {
+        font-size: 14px;
+        color: var(--grey-50);
+        padding-bottom: 2px;
+      }
+      .recruit_duties {
+        font-size: 14px;
+        color: var(--primary-100);
+      }
+    }
+  }
 }

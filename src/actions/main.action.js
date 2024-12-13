@@ -18,6 +18,17 @@ export const getRecruitsData = createAsyncThunk(
     }
   },
 )
+export const getDutiesData = createAsyncThunk(
+  'main/GET_DUTIES_DATA',
+  async (param, {rejectWithValue}) => {
+    try {
+      const response = await MainAPI.getDutiesData()
+      return response.data
+    } catch (e) {
+      return rejectWithValue(e.response.data)
+    }
+  },
+)
 
 const initialState = {
   recruitsData: null,
@@ -67,11 +78,18 @@ const main = createSlice({
     builder.addCase(getRecruitsData.rejected, (state, _) => {
       state.recruitsData = null
     })
+    builder.addCase(getDutiesData.fulfilled, (state, {payload}) => {
+      state.dutiesData = payload
+    })
+    builder.addCase(getDutiesData.rejected, (state, _) => {
+      state.dutiesData = null
+    })
   },
 })
 
 export const mainActions = {
   ...main.actions,
   getRecruitsData,
+  getDutiesData,
 }
 export default main.reducer
