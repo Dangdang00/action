@@ -1,0 +1,27 @@
+{
+  "parser": "@babel/eslint-parser",
+  "extends": ["standard", "plugin:react/recommended"],
+  "settings": {
+    "propWrapperFunctions": [
+      "forbidExtraProps",
+      {"property": "freeze", "object": "Object"},
+      {"property": "myFavoriteWrapper"}
+    ],
+    "linkComponents": ["Hyperlink", {"name": "Link", "linkAttribute": "to"}]
+  },
+  "env": {
+    "browser": true
+  },
+  "rules": {
+    "quotes": ["error", "single", {"avoidEscape": true}],
+    "no-empty-function": "off",
+    "react/display-name": "off",
+    "no-undef": "error",
+    "no-unused-vars": "error",
+    "no-console": "off",
+    "object-curly-spacing": "off",
+    "space-before-function-paren": "off",
+    "comma-dangle": "off",
+    "multiline-ternary": "off"
+  }
+}
