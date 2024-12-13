@@ -1,4 +1,5 @@
 import React from 'react'
+import classNames from 'classnames'
 import {IconMapping} from './IconMapping'
 
 import './icons.scss'
@@ -12,7 +13,7 @@ export default function Icon({id, width, height, viewBox, className, style, ...r
       height={height || 20}
       viewBox={viewBox || '0 0 20 20'}
       xmlns="http://www.w3.org/2000/svg"
-      className={`icon_container ${className || ''}`}
+      className={classNames('icon_container', className)}
       style={style}
       {...rest}>
       {IconPath}
