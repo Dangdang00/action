@@ -1,0 +1,36 @@
+.calendar_container {
+  .calendar_header {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--primary-100);
+    padding: 16px 0;
+  }
+  .calendar_body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    .calendar_day_name {
+      color: var(--grey-80);
+      background-color: var(--grey-04);
+      text-align: center;
+      padding: 2px 0;
+    }
+    .calendar_date_container {
+      display: grid;
+      grid-template-rows: 24px 1fr;
+      &:not(:nth-child(7n)) {
+        border-right: 1px solid var(--grey-10);
+      }
+      .calendar_date {
+        border-bottom: 1px solid var(--grey-10);
+        padding: 2px 0;
+        text-align: center;
+      }
+      .calendar_content {
+        min-height: 100px;
+        font-size: 14px;
+        border-bottom: 1px solid var(--grey-10);
+        padding: 4px;
+      }
+    }
+  }
+}
