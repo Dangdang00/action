@@ -32,43 +32,44 @@ export const getDutiesData = createAsyncThunk(
 
 const initialState = {
   recruitsData: null,
-  selectedMonthlyRecruitData: null,
+  monthlyRecruitData: null,
 }
 
 const main = createSlice({
   name: 'main',
   initialState,
   reducers: {
-    getSelectedMonthlyRecruitData: (state, {payload}) => {
+    getmonthlyRecruitData: (state, {payload}) => {
       const {startDate, endDate} = payload
 
       const recruitsData = state.recruitsData
 
-      const _selectedMonthlyRecruitData = []
-
+      const _monthlyRecruitData = []
       recruitsData.map((data) => {
         if (dayjs(data.start_time).isBetween(startDate, endDate, 'second', '[]')) {
-          _selectedMonthlyRecruitData.push({...data, type: 'start'})
+          _monthlyRecruitData.push({...data, type: 'start'})
         }
 
         if (dayjs(data.end_time).isBetween(startDate, endDate, 'second', '[]')) {
-          _selectedMonthlyRecruitData.push({...data, type: 'end'})
+          _monthlyRecruitData.push({...data, type: 'end'})
         }
       })
 
-      // type과 company_name 순으로 정렬
-      _selectedMonthlyRecruitData.sort((a, b) => {
-        // type 정렬 (start가 먼저 오도록 매핑)
-        const typeOrder = (type) => (type === 'start' ? 0 : 1)
-        const typeComparison = typeOrder(a.type) - typeOrder(b.type)
+      _monthlyRecruitData.sort((a, b) => {
+        // 날짜 기준 정렬
+        const dateCompare = dayjs(a[`${a.type}_time`]).diff(dayjs(b[`${b.type}_time`]))
+        if (dateCompare !== 0) return dateCompare
 
-        if (typeComparison !== 0) return typeComparison
+        // type 기준 정렬
+        const typePriority = {start: 0, end: 1}
+        const typeCompare = typePriority[a.type] - typePriority[b.type]
+        if (typeCompare !== 0) return typeCompare
 
-        // company_name 정렬 (알파벳 순)
+        // company_name 기준 정렬 (알파벳 순)
         return a.company_name.localeCompare(b.company_name)
       })
 
-      state.selectedMonthlyRecruitData = _selectedMonthlyRecruitData
+      state.monthlyRecruitData = _monthlyRecruitData
     },
   },
   extraReducers: (builder) => {

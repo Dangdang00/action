@@ -12,6 +12,17 @@
   &.dimm {
     background-color: var(--dimm-layer);
   }
+  .arrow_icon {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    &.left {
+      left: 24px;
+    }
+    &.right {
+      right: 24px;
+    }
+  }
   .modal {
     max-width: 750px;
     height: fit-content;
