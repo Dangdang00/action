@@ -1,6 +1,7 @@
 import React from 'react'
 import dayjs from 'dayjs'
 import weekday from 'dayjs/plugin/weekday'
+import SearchCondition from './SearchCondition'
 import {useNavigate, useParams} from 'react-router-dom'
 import {Calendar, Modal} from '../../components'
 
@@ -128,6 +129,7 @@ function MainView(props) {
 
   return (
     <div className="main_container">
+      <SearchCondition />
       <Calendar
         currentDate={selectedYearMonth}
         onChangeCurrentDate={setSelectedYearMonth}
