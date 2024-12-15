@@ -18,9 +18,13 @@ function MainView(props) {
 
   const {id: paramId} = useParams()
 
-  const {recruitsData, monthlyRecruitData, dutiesData} = useSelector((state) => {
+  const {recruitsData, filteredMonthlyRecruitData, dutiesData} = useSelector((state) => {
     return state['main.action']
   }, shallowEqual)
+
+  const [searchData, setSearchData] = React.useState({
+    companyName: '',
+  })
 
   const [selectedYearMonth, setSelectedYearMonth] = React.useState(dayjs())
   const [checkedRecruitList, setCheckedRecruitList] = React.useState(new Set())
@@ -43,29 +47,35 @@ function MainView(props) {
       const startDate = firstDayOfMonth.weekday(0).format('YYYY-MM-DD HH:mm:ss') // 1일이 포함된 주의 일요일
       const endDate = lastDayOfMonth.weekday(6).endOf('day').format('YYYY-MM-DD HH:mm:ss') // 마지막 날이 포함된 주의 토요일
 
-      dispatch(mainActions.getmonthlyRecruitData({startDate, endDate}))
+      dispatch(mainActions.getMonthlyRecruitData({startDate, endDate, searchData}))
     }
   }, [dispatch, recruitsData, selectedYearMonth])
 
+  React.useEffect(() => {
+    if (searchData) {
+      dispatch(mainActions.getFilteredMonthlyRecruitData(searchData))
+    }
+  }, [dispatch, searchData])
+
   // paramId와 selectedRecruit 동기화
   React.useEffect(() => {
-    if (paramId && monthlyRecruitData) {
+    if (paramId && filteredMonthlyRecruitData) {
       const recruitId = Number(paramId)
-      const recruit = monthlyRecruitData.find((item) => item.id === recruitId)
+      const recruit = filteredMonthlyRecruitData.find((item) => item.id === recruitId)
       if (recruit) {
         setSelectedRecruit(recruit)
         setCheckedRecruitList((checkedRecruitList) => new Set(checkedRecruitList).add(recruitId))
       }
     }
-  }, [paramId, monthlyRecruitData])
+  }, [paramId, filteredMonthlyRecruitData])
 
   React.useEffect(() => {
-    if (selectedRecruit && monthlyRecruitData) {
+    if (selectedRecruit && filteredMonthlyRecruitData) {
       const currentIndex = getCurrentRecruitIndex()
       setPrevRecruit(currentIndex > 0)
-      setNextRecruit(currentIndex < monthlyRecruitData.length - 1)
+      setNextRecruit(currentIndex < filteredMonthlyRecruitData.length - 1)
     }
-  }, [selectedRecruit, monthlyRecruitData])
+  }, [selectedRecruit, filteredMonthlyRecruitData])
 
   const onRecruitClick = (event) => {
     setShow(true)
@@ -74,18 +84,18 @@ function MainView(props) {
   }
 
   const getCurrentRecruitIndex = () => {
-    return monthlyRecruitData.findIndex((item) => item.id === selectedRecruit.id)
+    return filteredMonthlyRecruitData.findIndex((item) => item.id === selectedRecruit.id)
   }
 
   const navigateRecruit = (direction) => {
-    if (selectedRecruit && monthlyRecruitData) {
+    if (selectedRecruit && filteredMonthlyRecruitData) {
       const currentIndex = getCurrentRecruitIndex()
       const newIndex = direction === 'prev' ? currentIndex - 1 : currentIndex + 1
 
-      if (newIndex >= 0 && newIndex < monthlyRecruitData.length) {
-        const _recruit = monthlyRecruitData[newIndex]
-        setSelectedRecruit(_recruit)
-        navigate(`/${_recruit.id}`)
+      if (newIndex >= 0 && newIndex < filteredMonthlyRecruitData.length) {
+        const recruit = filteredMonthlyRecruitData[newIndex]
+        setSelectedRecruit(recruit)
+        navigate(`/${recruit.id}`)
       }
     }
   }
@@ -129,11 +139,11 @@ function MainView(props) {
 
   return (
     <div className="main_container">
-      <SearchCondition />
+      <SearchCondition searchData={searchData} setSearchData={setSearchData} />
       <Calendar
         currentDate={selectedYearMonth}
         onChangeCurrentDate={setSelectedYearMonth}
-        events={monthlyRecruitData}
+        events={filteredMonthlyRecruitData}
         renderEvent={renderEvent}
       />
       {selectedRecruit && (

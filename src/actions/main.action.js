@@ -33,29 +33,37 @@ export const getDutiesData = createAsyncThunk(
 const initialState = {
   recruitsData: null,
   monthlyRecruitData: null,
+  filteredMonthlyRecruitData: null,
+}
+
+const getFilteredByCompanyName = (data, companyName) => {
+  if (Array.isArray(data) && data.length > 0) {
+    return companyName ? data.filter((item) => item.company_name.includes(companyName)) : data
+  }
+  return []
 }
 
 const main = createSlice({
   name: 'main',
   initialState,
   reducers: {
-    getmonthlyRecruitData: (state, {payload}) => {
-      const {startDate, endDate} = payload
+    getMonthlyRecruitData: (state, {payload}) => {
+      const {startDate, endDate, searchData} = payload
 
       const recruitsData = state.recruitsData
 
-      const _monthlyRecruitData = []
+      const monthlyRecruitData = []
       recruitsData.map((data) => {
         if (dayjs(data.start_time).isBetween(startDate, endDate, 'second', '[]')) {
-          _monthlyRecruitData.push({...data, type: 'start'})
+          monthlyRecruitData.push({...data, type: 'start'})
         }
 
         if (dayjs(data.end_time).isBetween(startDate, endDate, 'second', '[]')) {
-          _monthlyRecruitData.push({...data, type: 'end'})
+          monthlyRecruitData.push({...data, type: 'end'})
         }
       })
 
-      _monthlyRecruitData.sort((a, b) => {
+      monthlyRecruitData.sort((a, b) => {
         // 날짜 기준 정렬
         const dateCompare = dayjs(a[`${a.type}_time`]).diff(dayjs(b[`${b.type}_time`]))
         if (dateCompare !== 0) return dateCompare
@@ -69,7 +77,18 @@ const main = createSlice({
         return a.company_name.localeCompare(b.company_name)
       })
 
-      state.monthlyRecruitData = _monthlyRecruitData
+      state.monthlyRecruitData = monthlyRecruitData
+      state.filteredMonthlyRecruitData = getFilteredByCompanyName(
+        monthlyRecruitData,
+        searchData?.companyName,
+      )
+    },
+    getFilteredMonthlyRecruitData: (state, {payload}) => {
+      const {companyName} = payload
+
+      const monthlyRecruitData = state.monthlyRecruitData
+
+      state.filteredMonthlyRecruitData = getFilteredByCompanyName(monthlyRecruitData, companyName)
     },
   },
   extraReducers: (builder) => {

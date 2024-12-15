@@ -1,10 +1,9 @@
 import React from 'react'
 import {Icons} from '../../components'
 
-function SearchCondition() {
+function SearchCondition({setSearchData}) {
   const companyNameInputRef = React.useRef(null)
 
-  const [companyName, setCompanyName] = React.useState('')
   const [isShowFilterWindow, setShowFilterWindow] = React.useState(false)
 
   React.useEffect(() => {
@@ -42,11 +41,12 @@ function SearchCondition() {
               ref={companyNameInputRef}
               type="text"
               placeholder="기업명을 검색하세요."
-              onChange={(e) => setCompanyName(e.target.value)}
+              onChange={(e) =>
+                setSearchData((searchData) => ({...searchData, companyName: e.target.value}))
+              }
             />
           </div>
         </div>
-
         <div
           className="select_box_container flex"
           onClick={() => setShowFilterWindow((isShowFilterWindow) => !isShowFilterWindow)}>
