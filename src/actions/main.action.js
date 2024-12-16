@@ -34,13 +34,34 @@ const initialState = {
   recruitsData: null,
   monthlyRecruitData: null,
   filteredMonthlyRecruitData: null,
+  dutiesData: null,
+  dutiesTreeData: null,
 }
 
-const getFilteredByCompanyName = (data, companyName) => {
+const getFilteredByConditions = (data, {companyName, dutyList}) => {
   if (Array.isArray(data) && data.length > 0) {
-    return companyName ? data.filter((item) => item.company_name.includes(companyName)) : data
+    return data.filter((item) => {
+      const matchesCompanyName = companyName ? item.company_name.includes(companyName) : true
+      const matchesDuties =
+        dutyList && dutyList.length > 0
+          ? item.duty_ids.some((id) => dutyList.includes(id)) // 교집합
+          : true
+
+      return matchesCompanyName && matchesDuties
+    })
   }
   return []
+}
+
+const findNodeById = (treeData, nodeId) => {
+  for (const node of treeData) {
+    if (node.id === nodeId) return node
+    if (node.children) {
+      const targetNode = findNodeById(node.children, nodeId)
+      if (targetNode) return targetNode
+    }
+  }
+  return null
 }
 
 const main = createSlice({
@@ -78,17 +99,17 @@ const main = createSlice({
       })
 
       state.monthlyRecruitData = monthlyRecruitData
-      state.filteredMonthlyRecruitData = getFilteredByCompanyName(
-        monthlyRecruitData,
-        searchData?.companyName,
-      )
+      state.filteredMonthlyRecruitData = getFilteredByConditions(monthlyRecruitData, searchData)
     },
     getFilteredMonthlyRecruitData: (state, {payload}) => {
-      const {companyName} = payload
+      const {companyName, dutyList} = payload
 
       const monthlyRecruitData = state.monthlyRecruitData
 
-      state.filteredMonthlyRecruitData = getFilteredByCompanyName(monthlyRecruitData, companyName)
+      state.filteredMonthlyRecruitData = getFilteredByConditions(monthlyRecruitData, {
+        companyName,
+        dutyList,
+      })
     },
   },
   extraReducers: (builder) => {
@@ -99,10 +120,26 @@ const main = createSlice({
       state.recruitsData = null
     })
     builder.addCase(getDutiesData.fulfilled, (state, {payload}) => {
-      state.dutiesData = payload
+      const dutiesData = payload
+      const dutiesTreeData = []
+
+      dutiesData.map((item) => {
+        if (item.parent_id === null) {
+          dutiesTreeData.push({...item, children: []})
+        } else {
+          const targetNode = findNodeById(dutiesTreeData, item.parent_id)
+          if (targetNode) {
+            targetNode.children.push({...item, children: []})
+          }
+        }
+      })
+
+      state.dutiesData = dutiesData
+      state.dutiesTreeData = dutiesTreeData
     })
     builder.addCase(getDutiesData.rejected, (state, _) => {
       state.dutiesData = null
+      state.dutiesTreeData = null
     })
   },
 })

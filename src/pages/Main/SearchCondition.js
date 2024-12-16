@@ -1,10 +1,17 @@
 import React from 'react'
-import {Icons} from '../../components'
+import classNames from 'classnames'
+import {Icons, Checkbox} from '../../components'
+import {getAllNodeIdList, findParentNode} from '../../helpers'
 
-function SearchCondition({setSearchData}) {
+const MAX_DEPTH = 3
+
+function SearchCondition({setSearchData, dutiesTreeData}) {
   const companyNameInputRef = React.useRef(null)
 
   const [isShowFilterWindow, setShowFilterWindow] = React.useState(false)
+
+  const [selectedDuties, setSelectedDuties] = React.useState([])
+  const [selectedTreeNodes, setSelectedTreeNodes] = React.useState([])
 
   React.useEffect(() => {
     if (isShowFilterWindow) {
@@ -26,6 +33,104 @@ function SearchCondition({setSearchData}) {
 
   const handleOnClose = () => {
     setShowFilterWindow(false)
+  }
+
+  const handleSelectNode = (node, depth) => {
+    setSelectedTreeNodes((selectedTreeNodes) => {
+      const _selectedTreeNodes = [...selectedTreeNodes]
+      _selectedTreeNodes[depth] = node
+      return _selectedTreeNodes.slice(0, depth + 1)
+    })
+  }
+
+  const updateParentState = (node, updatedDuties) => {
+    let parentNode = findParentNode(dutiesTreeData, node.id)
+
+    while (parentNode) {
+      let isAllChildrenSelected = true
+      for (const child of parentNode.children) {
+        if (!updatedDuties.includes(child.id)) {
+          isAllChildrenSelected = false
+          break
+        }
+      }
+
+      if (isAllChildrenSelected) {
+        if (!updatedDuties.includes(parentNode.id)) {
+          updatedDuties = [...updatedDuties, parentNode.id]
+        }
+      } else {
+        updatedDuties = updatedDuties.filter((id) => id !== parentNode.id)
+      }
+
+      parentNode = findParentNode(dutiesTreeData, parentNode.id)
+    }
+    return updatedDuties
+  }
+
+  const handleSelectDuties = (node, isChecked) => {
+    const nodeIdList = getAllNodeIdList(node)
+
+    setSelectedDuties((selectedDuties) => {
+      let updatedDuties = isChecked
+        ? [...selectedDuties, ...nodeIdList]
+        : selectedDuties.filter((id) => !nodeIdList.includes(id))
+
+      updatedDuties = updateParentState(node, updatedDuties)
+
+      setSearchData((searchData) => ({
+        ...searchData,
+        dutyList: updatedDuties,
+      }))
+
+      return Array.from(new Set(updatedDuties))
+    })
+  }
+
+  const renderTreeColumn = (nodes, depth) => {
+    const _selectedDuties = new Set(selectedDuties)
+    return depth !== MAX_DEPTH - 1 ? (
+      <div className="duty_item_wrap flex_grow">
+        {nodes.map((node) => {
+          const isChecked = _selectedDuties.has(node.id)
+          return (
+            <div
+              key={node.id}
+              className="duty_item flex flex_space_between flex_vertical_center"
+              onClick={() => handleSelectNode(node, depth)}>
+              <Checkbox
+                id={node.id}
+                checked={isChecked}
+                onChange={() => handleSelectDuties(node, !isChecked)}>
+                {node.name}
+              </Checkbox>
+              {node.children && node.children.length > 0 && (
+                <Icons
+                  id="arrowRight24"
+                  width={16}
+                  height={16}
+                  viewBox="0 0 24 24"
+                  color="var(--grey-50)"
+                />
+              )}
+            </div>
+          )
+        })}
+      </div>
+    ) : (
+      <div className="duty_button_container flex gap_4">
+        {nodes.map((node) => {
+          const isChecked = _selectedDuties.has(node.id)
+          return (
+            <div
+              className={classNames('duty_button', isChecked && 'checked')}
+              onClick={() => handleSelectDuties(node, !isChecked)}>
+              {node.name}
+            </div>
+          )
+        })}
+      </div>
+    )
   }
 
   return (
@@ -81,8 +186,21 @@ function SearchCondition({setSearchData}) {
               handleOnClose()
             }
           }}>
-          <div className="filter_window_wrap">
+          <div className="filter_window_wrap flex_column">
             <div>직무</div>
+            <div className="duty_item_container flex">
+              <div className="duty_item_wrap flex_grow">{renderTreeColumn(dutiesTreeData, 0)}</div>
+              {selectedTreeNodes.map((node, index) => {
+                return (
+                  <div key={`duty_item_wrap_${index}`} className="duty_item_wrap flex_grow">
+                    {node && renderTreeColumn(node.children, index + 1)}
+                  </div>
+                )
+              })}
+              {Array.from({length: MAX_DEPTH - 1 - selectedTreeNodes.length}, (_) => (
+                <div className="duty_item_wrap flex_grow"></div>
+              ))}
+            </div>
           </div>
         </div>
       )}

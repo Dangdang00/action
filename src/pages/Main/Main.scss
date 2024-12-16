@@ -58,6 +58,43 @@
       padding: 24px 32px 40px;
       background-color: var(--grey-04);
       box-shadow: var(--shadow-01);
+      .duty_item_container {
+        height: 100%;
+        border: 1px solid var(--grey-10);
+        border-radius: 8px;
+        margin-top: 8px;
+        background-color: var(--white);
+        overflow: hidden;
+        .duty_item_wrap {
+          overflow-y: auto;
+          &:not(:last-child) {
+            border-right: 1px solid var(--grey-10);
+          }
+          .duty_item {
+            color: var(--grey-80);
+            padding: 8px 16px;
+            cursor: pointer;
+            &:not(:last-child) {
+              border-bottom: 1px solid var(--grey-10);
+            }
+          }
+          .duty_button_container {
+            padding: 16px;
+            flex-wrap: wrap;
+            .duty_button {
+              color: var(--grey-80);
+              border: 1px solid var(--grey-10);
+              border-radius: 24px;
+              padding: 8px 16px;
+              cursor: pointer;
+              &.checked {
+                border: 1px solid var(--secondary-50);
+                background-color: var(--secondary-10);
+              }
+            }
+          }
+        }
+      }
     }
   }
   .calendar_content {

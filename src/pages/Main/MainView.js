@@ -2,7 +2,7 @@ import React from 'react'
 import dayjs from 'dayjs'
 import weekday from 'dayjs/plugin/weekday'
 import SearchCondition from './SearchCondition'
-import {useNavigate, useParams} from 'react-router-dom'
+import {useNavigate, useLocation, useParams} from 'react-router-dom'
 import {Calendar, Modal} from '../../components'
 
 import {useDispatch, useSelector, shallowEqual} from 'react-redux'
@@ -15,15 +15,21 @@ dayjs.extend(weekday)
 function MainView(props) {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const {id: paramId} = useParams()
+  const {type} = location.state || {}
 
-  const {recruitsData, filteredMonthlyRecruitData, dutiesData} = useSelector((state) => {
-    return state['main.action']
-  }, shallowEqual)
+  const {recruitsData, filteredMonthlyRecruitData, dutiesData, dutiesTreeData} = useSelector(
+    (state) => {
+      return state['main.action']
+    },
+    shallowEqual,
+  )
 
   const [searchData, setSearchData] = React.useState({
     companyName: '',
+    dutyList: [],
   })
 
   const [selectedYearMonth, setSelectedYearMonth] = React.useState(dayjs())
@@ -59,15 +65,17 @@ function MainView(props) {
 
   // paramId와 selectedRecruit 동기화
   React.useEffect(() => {
-    if (paramId && filteredMonthlyRecruitData) {
+    if (paramId && type && filteredMonthlyRecruitData) {
       const recruitId = Number(paramId)
-      const recruit = filteredMonthlyRecruitData.find((item) => item.id === recruitId)
+      const recruit = filteredMonthlyRecruitData.find(
+        (item) => item.id === recruitId && item.type === type,
+      )
       if (recruit) {
         setSelectedRecruit(recruit)
         setCheckedRecruitList((checkedRecruitList) => new Set(checkedRecruitList).add(recruitId))
       }
     }
-  }, [paramId, filteredMonthlyRecruitData])
+  }, [paramId, type, filteredMonthlyRecruitData])
 
   React.useEffect(() => {
     if (selectedRecruit && filteredMonthlyRecruitData) {
@@ -80,11 +88,13 @@ function MainView(props) {
   const onRecruitClick = (event) => {
     setShow(true)
     setSelectedRecruit(event)
-    navigate(`/${event.id}`)
+    navigate(`/${event.id}`, {state: {type: event.type}})
   }
 
   const getCurrentRecruitIndex = () => {
-    return filteredMonthlyRecruitData.findIndex((item) => item.id === selectedRecruit.id)
+    return filteredMonthlyRecruitData.findIndex(
+      (item) => item.id === selectedRecruit.id && item.type === selectedRecruit.type,
+    )
   }
 
   const navigateRecruit = (direction) => {
@@ -95,7 +105,7 @@ function MainView(props) {
       if (newIndex >= 0 && newIndex < filteredMonthlyRecruitData.length) {
         const recruit = filteredMonthlyRecruitData[newIndex]
         setSelectedRecruit(recruit)
-        navigate(`/${recruit.id}`)
+        navigate(`/${recruit.id}`, {state: {type: recruit.type}})
       }
     }
   }
@@ -139,7 +149,7 @@ function MainView(props) {
 
   return (
     <div className="main_container">
-      <SearchCondition searchData={searchData} setSearchData={setSearchData} />
+      <SearchCondition setSearchData={setSearchData} dutiesTreeData={dutiesTreeData} />
       <Calendar
         currentDate={selectedYearMonth}
         onChangeCurrentDate={setSelectedYearMonth}
