@@ -155,24 +155,24 @@ function SearchCondition({setSearchData, dutiesTreeData}) {
         <div
           className="select_box_container flex"
           onClick={() => setShowFilterWindow((isShowFilterWindow) => !isShowFilterWindow)}>
-          <div className="select_box_wrap flex flex_vertical_center">
+          <div className="select_box_wrap flex flex_grow flex_vertical_center">
             <div>
               <div className="select_box_label">채용형태</div>
-              <div>채용형태 선택</div>
+              <div className="select_box_text">채용형태 선택</div>
             </div>
             <Icons id="caretDown24" width={32} height={32} color="var(--grey-50)" />
           </div>
-          <div className="select_box_wrap flex flex_vertical_center">
+          <div className="select_box_wrap flex flex_grow flex_vertical_center">
             <div>
               <div className="select_box_label">기업분류</div>
-              <div>기업분류 선택</div>
+              <div className="select_box_text">기업분류 선택</div>
             </div>
             <Icons id="caretDown24" width={32} height={32} color="var(--grey-50)" />
           </div>
-          <div className="select_box_wrap flex flex_vertical_center">
+          <div className="select_box_wrap flex flex_grow flex_vertical_center">
             <div>
               <div className="select_box_label">직무</div>
-              <div>직무 선택</div>
+              <div className="select_box_text">직무 선택</div>
             </div>
             <Icons id="caretDown24" width={32} height={32} color="var(--grey-50)" />
           </div>

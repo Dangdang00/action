@@ -42,6 +42,10 @@
           color: var(--grey-80);
           padding-bottom: 2px;
         }
+        .select_box_text {
+          font-size: 14px;
+          color: var(--grey-60);
+        }
       }
     }
   }
@@ -58,13 +62,15 @@
       padding: 24px 32px 40px;
       background-color: var(--grey-04);
       box-shadow: var(--shadow-01);
+      overflow-x: auto;
       .duty_item_container {
+        min-width: 1000px;
         height: 100%;
         border: 1px solid var(--grey-10);
         border-radius: 8px;
         margin-top: 8px;
         background-color: var(--white);
-        overflow: hidden;
+        overflow-y: hidden;
         .duty_item_wrap {
           overflow-y: auto;
           &:not(:last-child) {
