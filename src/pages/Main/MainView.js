@@ -173,7 +173,7 @@ function MainView(props) {
                 {getDutiesLabelList(selectedRecruit.duty_ids).join(', ')}
               </div>
             </div>
-            <img src={selectedRecruit.image_url} style={{maxWidth: '100%'}} />
+            <img src={selectedRecruit.image_url} />
           </div>
         </Modal>
       )}

@@ -74,7 +74,7 @@ const main = createSlice({
       const recruitsData = state.recruitsData
 
       const monthlyRecruitData = []
-      recruitsData.map((data) => {
+      recruitsData.forEach((data) => {
         if (dayjs(data.start_time).isBetween(startDate, endDate, 'second', '[]')) {
           monthlyRecruitData.push({...data, type: 'start'})
         }
@@ -123,7 +123,7 @@ const main = createSlice({
       const dutiesData = payload
       const dutiesTreeData = []
 
-      dutiesData.map((item) => {
+      dutiesData.forEach((item) => {
         if (item.parent_id === null) {
           dutiesTreeData.push({...item, children: []})
         } else {
