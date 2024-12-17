@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import {Icons} from '../../components'
+import {Icon} from '../../components'
 
 import './Checkbox.scss'
 
@@ -41,9 +41,9 @@ export default function Checkbox({
           className,
         )}>
         {checked ? (
-          <Icons id="checkOn" className="check_on" color={fillCheckOn || 'var(--secondary-100)'} />
+          <Icon id="checkOn" className="check_on" color={fillCheckOn || 'var(--secondary-100)'} />
         ) : (
-          <Icons id="checkOff" className="check_off" color={fillCheckOff || 'var(--grey-50)'} />
+          <Icon id="checkOff" className="check_off" color={fillCheckOff || 'var(--grey-50)'} />
         )}
         {children && <span>{children}</span>}
       </label>

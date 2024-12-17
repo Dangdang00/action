@@ -1,6 +1,6 @@
 import React from 'react'
 import dayjs from 'dayjs'
-import {Icons} from '../../components'
+import {Icon} from '../../components'
 
 import './Calendar.scss'
 
@@ -43,14 +43,14 @@ export default function Calendar({currentDate, onChangeCurrentDate, events, rend
     <>
       <div className="calendar_container">
         <div className="calendar_header flex center gap_16">
-          <Icons
+          <Icon
             id="arrowLeft24"
             viewBox="0 0 24 24"
             color="var(--grey-50)"
             onClick={handlePreviousMonth}
           />
           <span>{currentDate.format('YYYY-MM')}</span>
-          <Icons
+          <Icon
             id="arrowRight24"
             viewBox="0 0 24 24"
             color="var(--grey-50)"

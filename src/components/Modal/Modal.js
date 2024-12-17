@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {Icons} from '../../components'
+import {Icon} from '../../components'
 
 import './Modal.scss'
 
@@ -28,7 +28,7 @@ export default function Modal({isShow, onPrevClick, onNextClick, onClose, childr
           }
         }}>
         {onPrevClick && (
-          <Icons
+          <Icon
             id="arrowLeft24"
             className="arrow_icon left"
             width={48}
@@ -40,7 +40,7 @@ export default function Modal({isShow, onPrevClick, onNextClick, onClose, childr
         )}
         <div className="modal">
           <div className="flex flex_horizontal_end">
-            <Icons
+            <Icon
               id="close24"
               width={24}
               height={24}
@@ -52,7 +52,7 @@ export default function Modal({isShow, onPrevClick, onNextClick, onClose, childr
           {children}
         </div>
         {onNextClick && (
-          <Icons
+          <Icon
             id="arrowRight24"
             className="arrow_icon right"
             width={48}

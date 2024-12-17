@@ -45,7 +45,7 @@ src/
 ├── components/         # 재사용 가능한 컴포넌트
 │   ├── Calendar/
 │   ├── Checkbox/
-│   ├── Icons/
+│   ├── Icon/
 │   └── Modal/
 ├── helpers/            # 유틸리티 함수 및 상태 관리 파일
 │   ├── store.js

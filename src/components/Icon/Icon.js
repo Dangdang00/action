@@ -2,7 +2,7 @@ import React from 'react'
 import classNames from 'classnames'
 import {IconMapping} from './IconMapping'
 
-import './Icons.scss'
+import './Icon.scss'
 
 export default function Icon({id, width, height, viewBox, className, style, ...rest}) {
   const IconPath = IconMapping[id]
